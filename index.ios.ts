@@ -1,9 +1,9 @@
 declare var CMMotionManager: any;
 declare var NSOperationQueue: any;
 
-interface MagnetometerData {};
 interface AccelerometerData {x: number; y: number; z: number};
 interface GyroscopeData {x: number; y: number; z: number};
+interface MagnetometerData {x: number; y: number; z: number};
 
 var coremotionManager;
 var accelerometerIsListening = false;
@@ -63,6 +63,16 @@ export function setGyroscopeUpdateInterval(interval){
     coremotionManager.gyroscopeUpdateInterval = gyroscopeUpdateInterval;
   }
 }
+
+export function setMagnetometerUpdateInterval(interval){
+  if (interval) {
+    magnetometerUpdateInterval = interval;
+  }
+  if (coremotionManager) {
+    coremotionManager.magnetometerUpdateInterval = magnetometerUpdateInterval;
+  }
+}
+
 export function startAccelerometerUpdates(callback: (AccelerometerData) => void) {
   if (accelerometerIsListening) {
     throw new Error("Already listening for accelerometer updates.")
@@ -99,6 +109,28 @@ export function startGyroscopeUpdates(callback: (GyroscopeData) => void) {
     });
   }
 }
+
+export function startMagnetometerUpdates(callback: (MagnetometerData) => void) {
+  if (magnetometerIsListening) {
+    throw new Error("Already listening for magnetometer updates.")
+  }
+  createCoreMotionManager();
+  coremotionManager.magnetometerUpdateInterval = magnetometerUpdateInterval;
+  if (coremotionManager.magnetometerAvailable) {
+    var queue = NSOperationQueue.alloc().init();
+    coremotionManager.startMagnetometerUpdatesToQueueWithHandler(queue, (data, error) => {
+      // console.log('magnetometer ', JSON.stringify(data));
+      callback({
+        x: data.magneticField.x,
+        y: data.magneticField.y,
+        z: data.magneticField.z
+      });
+    });
+  } else {
+    throw new Error("Magnetometer not available.")
+  }
+}
+
 export function stopAccelerometerUpdates() {
   if (accelerometerIsListening) {
     coremotionManager.stopAccelerometerUpdates();
@@ -115,5 +147,14 @@ export function stopGyroscopeUpdates() {
     gyroscopeIsListening = false;
   } else {
     throw new Error("Currently not listening for gyroscope events.")
+  }
+}
+
+export function stopMagnetometerUpdates() {
+  if (magnetometerIsListening) {
+    coremotionManager.stopMagnetometerUpdates();
+    magnetometerIsListening = false;
+  } else {
+    throw new Error("Currently not listening for magnetometer events.");
   }
 }
