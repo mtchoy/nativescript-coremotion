@@ -10,6 +10,11 @@
     "type": "git",
     "url": "git+ssh://git@github.com/stephenfeather/nativescript-coremotion.git"
   },
+  "nativescript": {
+    "platforms": {
+      "ios": "2.3.0"
+    }
+  },
   "keywords": [
     "accelerometer",
     "gyroscope",
