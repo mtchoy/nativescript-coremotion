@@ -1,0 +1,27 @@
+{
+  "name": "nativescript-coremotion",
+  "version": "0.0.1",
+  "description": "iOS Core Motion plugin for NativeScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/stephenfeather/nativescript-coremotion.git"
+  },
+  "keywords": [
+    "accelerometer",
+    "gyroscope",
+    "magnetometer",
+    "nativescript",
+    "ios",
+    "coremotion"
+  ],
+  "author": "Stephen Feather",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephenfeather/nativescript-coremotion/issues"
+  },
+  "homepage": "https://github.com/stephenfeather/nativescript-coremotion#readme"
+}
