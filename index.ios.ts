@@ -1,9 +1,9 @@
 declare var CMMotionManager: any;
 declare var NSOperationQueue: any;
 
-interface GyroscopeData {};
 interface MagnetometerData {};
 interface AccelerometerData {x: number; y: number; z: number};
+interface GyroscopeData {x: number; y: number; z: number};
 
 var coremotionManager;
 var accelerometerIsListening = false;
@@ -54,6 +54,15 @@ export function setAccelerometerUpdateInterval(interval: number){
     coremotionManager.accelerometerUpdateInterval = accelerometerUpdateInterval;
   }
 }
+
+export function setGyroscopeUpdateInterval(interval){
+  if (interval) {
+    gyroscopeUpdateInterval = interval;
+  }
+  if (coremotionManager) {
+    coremotionManager.gyroscopeUpdateInterval = gyroscopeUpdateInterval;
+  }
+}
 export function startAccelerometerUpdates(callback: (AccelerometerData) => void) {
   if (accelerometerIsListening) {
     throw new Error("Already listening for accelerometer updates.")
@@ -75,6 +84,21 @@ export function startAccelerometerUpdates(callback: (AccelerometerData) => void)
     throw new Error("Accelerometer not available.")
   }
 }
+
+export function startGyroscopeUpdates(callback: (GyroscopeData) => void) {
+  createCoreMotionManager();
+  coremotionManager.gyroscopeUpdateInterval = gyroscopeUpdateInterval;
+  if (coremotionManager.gyroscopeAvailable) {
+    var queue = NSOperationQueue.alloc().init();
+    coremotionManager.startGyroscopeUpdatesToQueueWithHandler(queue, (data, error) => {
+      callback({
+        x: data.rotationRate.x,
+        y: data.rotationRate.y,
+        z: data.rotationRate.z
+      });
+    });
+  }
+}
 export function stopAccelerometerUpdates() {
   if (accelerometerIsListening) {
     coremotionManager.stopAccelerometerUpdates();
@@ -83,4 +107,13 @@ export function stopAccelerometerUpdates() {
     throw new Error("Currently not listening for accelerometer events.")
   }
 
+}
+
+export function stopGyroscopeUpdates() {
+  if (gyroscopeIsListening) {
+    coremotionManager.stopGyroscopeUpdates();
+    gyroscopeIsListening = false;
+  } else {
+    throw new Error("Currently not listening for gyroscope events.")
+  }
 }
