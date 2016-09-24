@@ -4,6 +4,7 @@ declare var NSOperationQueue: any;
 interface AccelerometerData {x: number; y: number; z: number};
 interface GyroscopeData {x: number; y: number; z: number};
 interface MagnetometerData {x: number; y: number; z: number};
+interface DeviceMotionData {};
 
 var coremotionManager;
 var accelerometerIsListening = false;
@@ -12,6 +13,8 @@ var gyroscopeIsListening = false;
 var gyroscopeUpdateInterval = 0.1;
 var magnetometerIsListening = false;
 var magnetometerUpdateInterval = 0.1;
+var deviceMotionIsListening = false;
+var deviceMotionUpdateInterval = 0.1;
 
 function createCoreMotionManager() {
   if (!coremotionManager) {
@@ -34,6 +37,11 @@ export function isMagnetometerAvailable(){
   return coremotionManager.magnetometerAvailable;
 }
 
+export function isDeviceMotionAvailable(){
+  createCoreMotionManager();
+  return coremotionManager.deviceMotionAvailable;
+}
+
 export function isAccelerometerActive(){
   return accelerometerIsListening;
 }
@@ -46,6 +54,9 @@ export function isMagnetometerActive(){
   return magnetometerIsListening;
 }
 
+export function isDeviceMotionActive(){
+  return deviceMotionIsListening;
+}
 export function setAccelerometerUpdateInterval(interval: number){
   if (interval) {
     accelerometerUpdateInterval = interval;
@@ -73,6 +84,15 @@ export function setMagnetometerUpdateInterval(interval){
   }
 }
 
+export function setDeviceMotionUpdateInterval(interval){
+  if (interval) {
+    deviceMotionUpdateInterval = interval;
+  }
+  if (coremotionManager) {
+    coremotionManager.deviceMotionUpdateInterval = deviceMotionUpdateInterval;
+  }
+}
+
 export function startAccelerometerUpdates(callback: (AccelerometerData) => void) {
   if (accelerometerIsListening) {
     throw new Error("Already listening for accelerometer updates.")
@@ -82,7 +102,6 @@ export function startAccelerometerUpdates(callback: (AccelerometerData) => void)
   if (coremotionManager.accelerometerAvailable) {
     var queue = NSOperationQueue.alloc().init();
     coremotionManager.startAccelerometerUpdatesToQueueWithHandler(queue, (data, error) => {
-      // console.log('accelerometer: ', JSON.stringify(data));
       callback({
         x: data.acceleration.x,
         y: data.acceleration.y,
@@ -119,7 +138,6 @@ export function startMagnetometerUpdates(callback: (MagnetometerData) => void) {
   if (coremotionManager.magnetometerAvailable) {
     var queue = NSOperationQueue.alloc().init();
     coremotionManager.startMagnetometerUpdatesToQueueWithHandler(queue, (data, error) => {
-      // console.log('magnetometer ', JSON.stringify(data));
       callback({
         x: data.magneticField.x,
         y: data.magneticField.y,
@@ -128,6 +146,51 @@ export function startMagnetometerUpdates(callback: (MagnetometerData) => void) {
     });
   } else {
     throw new Error("Magnetometer not available.")
+  }
+}
+
+export function startDeviceMotionUpdates(callback: (DeviceMotionData) => void) {
+  if (deviceMotionIsListening) {
+    throw new Error("Already listening for deviceMotion updates.")
+  }
+  createCoreMotionManager();
+  coremotionManager.deviceMotionUpdateInterval = deviceMotionUpdateInterval;
+  if (coremotionManager.deviceMotionAvailable) {
+    var queue = NSOperationQueue.alloc().init();
+    coremotionManager.startDeviceMotionUpdatesToQueueWithHandler(queue, (data, error) => {
+      callback({
+        attitude: {
+          pitch: data.attitude.pitch,
+          roll: data.attitude.roll,
+          yaw: data.attitude.yaw
+        },
+        gravity: {
+          x: data.gravity.x,
+          y: data.gravity.y,
+          z: data.gravity.z
+        },
+        userAcceleration: {
+          x: data.userAcceleration.x,
+          y: data.userAcceleration.y,
+          z: data.userAcceleration.z
+        },
+        magneticField: {
+          accuracy: data.magneticField.accuracy,
+          field: {
+            x: data.magneticField.field.x,
+            y: data.magneticField.field.y,
+            z: data.magneticField.field.z
+          }
+        },
+        rotationRate: {
+          x: data.rotationRate.x,
+          y: data.rotationRate.y,
+          z: data.rotationRate.z
+        }
+      });
+    });
+  } else {
+    throw new Error("DeviceMotion not available.")
   }
 }
 
@@ -156,5 +219,14 @@ export function stopMagnetometerUpdates() {
     magnetometerIsListening = false;
   } else {
     throw new Error("Currently not listening for magnetometer events.");
+  }
+}
+
+export function stopDeviceMotionUpdates() {
+  if (deviceMotionIsListening) {
+    coremotionManager.stopDeviceMotionUpdates();
+    deviceMotionIsListening = false;
+  } else {
+    throw new Error("Currently not listening for deviceMotion events.");
   }
 }
