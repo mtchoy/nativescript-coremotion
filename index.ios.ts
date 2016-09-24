@@ -1,9 +1,9 @@
 declare var CMMotionManager: any;
 declare var NSOperationQueue: any;
 
-interface AccelerometerData {};
 interface GyroscopeData {};
 interface MagnetometerData {};
+interface AccelerometerData {x: number; y: number; z: number};
 
 var coremotionManager;
 var accelerometerIsListening = false;
@@ -46,3 +46,41 @@ export function isMagnetometerActive(){
   return magnetometerIsListening;
 }
 
+export function setAccelerometerUpdateInterval(interval: number){
+  if (interval) {
+    accelerometerUpdateInterval = interval;
+  }
+  if (coremotionManager) {
+    coremotionManager.accelerometerUpdateInterval = accelerometerUpdateInterval;
+  }
+}
+export function startAccelerometerUpdates(callback: (AccelerometerData) => void) {
+  if (accelerometerIsListening) {
+    throw new Error("Already listening for accelerometer updates.")
+  }
+  createCoreMotionManager();
+  coremotionManager.accelerometerUpdateInterval = accelerometerUpdateInterval;
+  if (coremotionManager.accelerometerAvailable) {
+    var queue = NSOperationQueue.alloc().init();
+    coremotionManager.startAccelerometerUpdatesToQueueWithHandler(queue, (data, error) => {
+      // console.log('accelerometer: ', JSON.stringify(data));
+      callback({
+        x: data.acceleration.x,
+        y: data.acceleration.y,
+        z: data.acceleration.z
+      });
+    });
+    accelerometerIsListening = true;
+  } else {
+    throw new Error("Accelerometer not available.")
+  }
+}
+export function stopAccelerometerUpdates() {
+  if (accelerometerIsListening) {
+    coremotionManager.stopAccelerometerUpdates();
+    accelerometerIsListening = false;
+  } else {
+    throw new Error("Currently not listening for accelerometer events.")
+  }
+
+}
