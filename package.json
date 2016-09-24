@@ -19,7 +19,7 @@
     "coremotion"
   ],
   "author": "Stephen Feather",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/stephenfeather/nativescript-coremotion/issues"
   },
