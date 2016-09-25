@@ -11,7 +11,7 @@ tns plugin add nativescript-coremotion
 var Coremotion = require('nativescript-coremotion');
 ```
 ### Accelerometer
-#### isAccellerometerAvailable()
+#### isAccelerometerAvailable()
 Will return a boolean indicating of the current device supports the accelerometer.
 
 ```
