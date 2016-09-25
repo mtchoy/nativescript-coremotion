@@ -165,4 +165,4 @@ The ```isXYZActive()``` does not re-query Core Motion at this time, but simply r
 
 ## Warranty
 
-There is none. You accept any and all responsiblity and liability that comes with putting this into their app. Additionally, you agree to pay my legal bills if you use this and someone sues me because it was in your app.
+There is none. You accept any and all responsiblity and liability that comes with putting this into your app. Additionally, you agree to pay my legal bills if you use this and someone sues me because it was in your app.
