@@ -1,12 +1,15 @@
 declare var CMMotionManager: any;
+declare var CMAltimeter: any;
 declare var NSOperationQueue: any;
 
 interface AccelerometerData {x: number; y: number; z: number};
 interface GyroscopeData {x: number; y: number; z: number};
 interface MagnetometerData {x: number; y: number; z: number};
 interface DeviceMotionData {};
+interface AltimeterData {};
 
 var coremotionManager;
+var altimeter;
 var accelerometerIsListening = false;
 var accelerometerUpdateInterval = 0.1;
 var gyroscopeIsListening = false;
@@ -15,10 +18,18 @@ var magnetometerIsListening = false;
 var magnetometerUpdateInterval = 0.1;
 var deviceMotionIsListening = false;
 var deviceMotionUpdateInterval = 0.1;
+var altimeterIsListening = false;
+
 
 function createCoreMotionManager() {
   if (!coremotionManager) {
     coremotionManager = CMMotionManager.alloc().init();
+  }
+}
+
+function createAltimeter() {
+  if (!altimeter) {
+    altimeter = CMAltimeter.alloc().init();
   }
 }
 
@@ -42,6 +53,11 @@ export function isDeviceMotionAvailable(){
   return coremotionManager.deviceMotionAvailable;
 }
 
+export function isRelativeAltitudeAvailable(){
+  createAltimeter();
+  return altimeter.isRelativeAltitudeAvailable;
+}
+
 export function isAccelerometerActive(){
   return accelerometerIsListening;
 }
@@ -57,6 +73,11 @@ export function isMagnetometerActive(){
 export function isDeviceMotionActive(){
   return deviceMotionIsListening;
 }
+
+export function isRelativeAltitudeActive(){
+  return altimeterIsListening;
+}
+
 export function setAccelerometerUpdateInterval(interval: number){
   if (interval) {
     accelerometerUpdateInterval = interval;
@@ -199,6 +220,25 @@ export function startDeviceMotionUpdates(callback: (DeviceMotionData) => void) {
   }
 }
 
+export function startRelativeAltitudeUpdates(callback: (AltimeterData) => void) {
+  if (altimeterIsListening) {
+    throw new Error("Already listening for altimeter updates.")
+  }
+  createAltimeter();
+  if (altimeter.isRelativeAltitudeAvailable) {
+    var queue = NSOperationQueue.alloc().init();
+    altimeter.startRelativeAltitudeUpdatesToQueueWithHandler(queue, (data, error) => {
+      callback({
+        pressure: data.pressure, 
+        relativeAltitude: data.relativeAltitude
+      });
+    });
+    altimeterIsListening = true;
+  } else {
+    throw new Error("Altimeter not available.")
+  }
+}
+
 export function stopAccelerometerUpdates() {
   if (accelerometerIsListening) {
     coremotionManager.stopAccelerometerUpdates();
@@ -233,5 +273,14 @@ export function stopDeviceMotionUpdates() {
     deviceMotionIsListening = false;
   } else {
     throw new Error("Currently not listening for deviceMotion events.");
+  }
+}
+
+export function stopRelativeAltitudeUpdatesUpdates() {
+  if (altimeterIsListening) {
+    altimeter.stopDeviceMotionUpdates();
+    altimeterIsListening = false;
+  } else {
+    throw new Error("Currently not listening for altimeter events.");
   }
 }
