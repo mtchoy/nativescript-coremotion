@@ -126,6 +126,9 @@ export function startGyroscopeUpdates(callback: (GyroscopeData) => void) {
         z: data.rotationRate.z
       });
     });
+    gyroscopeIsListening = true;
+  } else {
+    throw new Error("Gyroscope not available.")
   }
 }
 
@@ -144,6 +147,7 @@ export function startMagnetometerUpdates(callback: (MagnetometerData) => void) {
         z: data.magneticField.z
       });
     });
+    magnetometerIsListening = true;
   } else {
     throw new Error("Magnetometer not available.")
   }
@@ -189,6 +193,7 @@ export function startDeviceMotionUpdates(callback: (DeviceMotionData) => void) {
         }
       });
     });
+    deviceMotionIsListening = true;
   } else {
     throw new Error("DeviceMotion not available.")
   }
