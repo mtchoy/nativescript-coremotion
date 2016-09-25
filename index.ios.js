@@ -3,7 +3,9 @@
 ;
 ;
 ;
+;
 var coremotionManager;
+var altimeter;
 var accelerometerIsListening = false;
 var accelerometerUpdateInterval = 0.1;
 var gyroscopeIsListening = false;
@@ -12,9 +14,15 @@ var magnetometerIsListening = false;
 var magnetometerUpdateInterval = 0.1;
 var deviceMotionIsListening = false;
 var deviceMotionUpdateInterval = 0.1;
+var altimeterIsListening = false;
 function createCoreMotionManager() {
     if (!coremotionManager) {
         coremotionManager = CMMotionManager.alloc().init();
+    }
+}
+function createAltimeter() {
+    if (!altimeter) {
+        altimeter = CMAltimeter.alloc().init();
     }
 }
 function isAccelerometerAvailable() {
@@ -37,6 +45,11 @@ function isDeviceMotionAvailable() {
     return coremotionManager.deviceMotionAvailable;
 }
 exports.isDeviceMotionAvailable = isDeviceMotionAvailable;
+function isRelativeAltitudeAvailable() {
+    createAltimeter();
+    return altimeter.isRelativeAltitudeAvailable;
+}
+exports.isRelativeAltitudeAvailable = isRelativeAltitudeAvailable;
 function isAccelerometerActive() {
     return accelerometerIsListening;
 }
@@ -53,6 +66,10 @@ function isDeviceMotionActive() {
     return deviceMotionIsListening;
 }
 exports.isDeviceMotionActive = isDeviceMotionActive;
+function isRelativeAltitudeActive() {
+    return altimeterIsListening;
+}
+exports.isRelativeAltitudeActive = isRelativeAltitudeActive;
 function setAccelerometerUpdateInterval(interval) {
     if (interval) {
         accelerometerUpdateInterval = interval;
@@ -123,6 +140,10 @@ function startGyroscopeUpdates(callback) {
                 z: data.rotationRate.z
             });
         });
+        gyroscopeIsListening = true;
+    }
+    else {
+        throw new Error("Gyroscope not available.");
     }
 }
 exports.startGyroscopeUpdates = startGyroscopeUpdates;
@@ -141,6 +162,7 @@ function startMagnetometerUpdates(callback) {
                 z: data.magneticField.z
             });
         });
+        magnetometerIsListening = true;
     }
     else {
         throw new Error("Magnetometer not available.");
@@ -187,12 +209,33 @@ function startDeviceMotionUpdates(callback) {
                 }
             });
         });
+        deviceMotionIsListening = true;
     }
     else {
         throw new Error("DeviceMotion not available.");
     }
 }
 exports.startDeviceMotionUpdates = startDeviceMotionUpdates;
+function startRelativeAltitudeUpdates(callback) {
+    if (altimeterIsListening) {
+        throw new Error("Already listening for altimeter updates.");
+    }
+    createAltimeter();
+    if (altimeter.isRelativeAltitudeAvailable) {
+        var queue = NSOperationQueue.alloc().init();
+        altimeter.startRelativeAltitudeUpdatesToQueueWithHandler(queue, function (data, error) {
+            callback({
+                pressure: data.pressure,
+                relativeAltitude: data.relativeAltitude
+            });
+        });
+        altimeterIsListening = true;
+    }
+    else {
+        throw new Error("Altimeter not available.");
+    }
+}
+exports.startRelativeAltitudeUpdates = startRelativeAltitudeUpdates;
 function stopAccelerometerUpdates() {
     if (accelerometerIsListening) {
         coremotionManager.stopAccelerometerUpdates();
@@ -233,3 +276,13 @@ function stopDeviceMotionUpdates() {
     }
 }
 exports.stopDeviceMotionUpdates = stopDeviceMotionUpdates;
+function stopRelativeAltitudeUpdatesUpdates() {
+    if (altimeterIsListening) {
+        altimeter.stopDeviceMotionUpdates();
+        altimeterIsListening = false;
+    }
+    else {
+        throw new Error("Currently not listening for altimeter events.");
+    }
+}
+exports.stopRelativeAltitudeUpdatesUpdates = stopRelativeAltitudeUpdatesUpdates;
