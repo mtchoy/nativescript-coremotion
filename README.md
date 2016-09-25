@@ -152,6 +152,35 @@ Stops Core Motion from sending deviceMotion updates.
 Coremotion.stopDeviceMotionUpdates()
 ```
 
+### Altimeter
+#### isRelativeAltitudeAvailable()
+Will return a boolean indicating of the current device supports Relative Altitude.
+
+```
+Coremotion.isRelativeAltitudeAvailable()
+```
+#### isRelativeAltitudeActive()
+Will return a boolean indicating if Core Motion is currently returning Relative Altitude data.
+
+```
+Coremotion.isRelativeAltitudeActive()
+```
+
+#### startRelativeAltitudeUpdates()
+Accepts a callback that returns the following:
+> {pressure, relativeAltitude}
+
+```
+Coremotion.startRelativeAltitudeUpdates(callback);
+```
+#### stopDeviceMotionUpdates()
+Stops Core Motion from sending Relative Altitude updates.
+
+```
+Coremotion.stopRelativeAltitudeUpdates()
+```
+
+
 ## Notes
 Plugin is iOS only as Core Motion does not exist on Android.
 
