@@ -306,3 +306,7 @@ export function isFloorCountingAvailable() {
   return CMPedometer.isFloorCountingAvailable();
 }
 
+export function isPaceAvailable() {
+  return CMPedometer.isPaceAvailable();
+}
+
