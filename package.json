@@ -1,6 +1,6 @@
 {
   "name": "nativescript-coremotion",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "iOS Core Motion plugin for NativeScript",
   "main": "index.js",
   "scripts": {
