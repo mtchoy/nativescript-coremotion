@@ -301,3 +301,8 @@ export function isCadenceAvailable() {
 export function isDistanceAvailable() {
   return CMPedometer.isDistanceAvailable();
 }
+
+export function isFloorCountingAvailable() {
+  return CMPedometer.isFloorCountingAvailable();
+}
+
