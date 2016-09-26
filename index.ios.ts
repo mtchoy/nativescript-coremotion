@@ -35,6 +35,13 @@ function createAltimeter() {
   }
 }
 
+function createPedometer() {
+  if (!pedometer) {
+    pedometer = CMPedometer.alloc().init();
+  }
+  console.log(pedometer);
+}
+
 export function isAccelerometerAvailable(){
   createCoreMotionManager();
   return coremotionManager.accelerometerAvailable;
