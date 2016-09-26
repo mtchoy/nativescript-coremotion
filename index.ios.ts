@@ -298,3 +298,6 @@ export function isCadenceAvailable() {
   return CMPedometer.isCadenceAvailable();
 }
 
+export function isDistanceAvailable() {
+  return CMPedometer.isDistanceAvailable();
+}
