@@ -310,6 +310,9 @@ export function isPaceAvailable() {
   return CMPedometer.isPaceAvailable();
 }
 
+export function isPedometerEventTrackingAvailable() {
+  return CMPedometer.isPedometerEventTrackingAvailable();
+}
 
 export function isStepCountingAvailable() {
   return CMPedometer.isStepCountingAvailable();
