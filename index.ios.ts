@@ -23,6 +23,7 @@ var deviceMotionIsListening = false;
 var deviceMotionUpdateInterval = 0.1;
 var altimeterIsListening = false;
 
+var pedometerIsListening = false;
 
 function createCoreMotionManager() {
   if (!coremotionManager) {
