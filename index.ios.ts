@@ -40,7 +40,7 @@ export function isAccelerometerAvailable(){
 
 export function isGyroscopeAvailable(){
   createCoreMotionManager();
-  return coremotionManager.gyroscopeAvailable;
+  return coremotionManager.gyroAvailable;
 }
 
 export function isMagnetometerAvailable(){
