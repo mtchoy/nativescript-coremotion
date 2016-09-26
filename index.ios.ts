@@ -310,3 +310,8 @@ export function isPaceAvailable() {
   return CMPedometer.isPaceAvailable();
 }
 
+
+export function isStepCountingAvailable() {
+  return CMPedometer.isStepCountingAvailable();
+}
+
