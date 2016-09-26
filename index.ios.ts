@@ -1,5 +1,6 @@
 declare var CMMotionManager: any;
 declare var CMAltimeter: any;
+declare var CMPedometer: any;
 declare var NSOperationQueue: any;
 
 interface AccelerometerData {x: number; y: number; z: number};
@@ -10,6 +11,7 @@ interface AltimeterData {};
 
 var coremotionManager;
 var altimeter;
+var pedometer;
 var accelerometerIsListening = false;
 var accelerometerUpdateInterval = 0.1;
 var gyroscopeIsListening = false;
