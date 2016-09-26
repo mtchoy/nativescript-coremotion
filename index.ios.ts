@@ -8,6 +8,7 @@ interface GyroscopeData {x: number; y: number; z: number};
 interface MagnetometerData {x: number; y: number; z: number};
 interface DeviceMotionData {};
 interface AltimeterData {};
+interface PedometerData {};
 
 var coremotionManager;
 var altimeter;
