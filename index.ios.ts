@@ -292,3 +292,9 @@ export function stopRelativeAltitudeUpdatesUpdates() {
     throw new Error("Currently not listening for altimeter events.");
   }
 }
+
+// Pedometer Functionality
+export function isCadenceAvailable() {
+  return CMPedometer.isCadenceAvailable();
+}
+
