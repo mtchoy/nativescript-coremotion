@@ -54,8 +54,7 @@ export function isDeviceMotionAvailable(){
 }
 
 export function isRelativeAltitudeAvailable(){
-  createAltimeter();
-  return altimeter.isRelativeAltitudeAvailable;
+  return CMAltimeter.isRelativeAltitudeAvailable();
 }
 
 export function isAccelerometerActive(){
